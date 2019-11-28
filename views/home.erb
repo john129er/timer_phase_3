@@ -1,0 +1,50 @@
+<div>
+  <form action="/task/add" method="post">
+    <label for="task_name">Add a new task:</label>
+    <input type="text" name="task_name" placeholder="New Task">
+    <input type="submit" value="Submit">
+  </form>
+</div>
+<br>
+<div>
+  <% if @tasks.size > 0 %>
+    <form action="/start_time" method="post">
+      <label for="task_name">Please select a task from the list.</label>
+      <select name="task_name">
+        <% @tasks.each do |task| %>
+          <option value="<%= task[:name] %>"><%= task[:name] %></option>
+        <% end %>
+      </select>
+      <br>
+      <input type="submit" value="Start Time">
+    </form>
+    
+    <form action="/end_time" method="post">
+      <input type="submit" value="End Time">
+    </form>
+  
+  <% else %>
+    <p>No tasks found. Please submit a new task to populate the task list.</p>
+    <div>
+      <input disabled type="submit" value="Start Time">
+    </div>
+    <div>
+      <input disabled type="submit" value="End Time">
+    </div>
+  <% end %>
+</div>
+
+<div class="links">
+  <p><a href="/timer/history">History</a></p>
+  <p><a href="/timer/search">Search</a></p>
+</div>
+
+<div class="utility">
+  <form action="/create_sample_data" method="post">
+    <input type="submit" value="Create Sample Data">
+  </form>
+  
+  <form action="/delete_all_data" method="post">
+    <input type="submit" value="Delete All Data">
+  </form>
+</div>

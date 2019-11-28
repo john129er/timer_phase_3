@@ -1,0 +1,63 @@
+<% if @tasks.size > 0 %>  
+  <p>Please enter your search parameters (YYYY-MM-DD for dates).</p>
+  <p>If you wish to search for a task by date or search for all tasks for a give date, please use Start Date as your date parameter.</p>
+
+  <form class="search" action="/timer/search" method="get">
+    <label for="task">Task:</label>
+    <select name="task">
+      <option value=""></option>
+      <% @tasks.each do |task| %>
+        <option value="<%= task[:name] %>"><%= task[:name] %></option>
+      <% end %>
+    </select>
+    <br>
+    <label for="date_start">Start Date:</label>
+    <input type="text" name="date_start" id="date_start" value="<%= params[:date_start] %>">
+    <br>
+    <label for="date_end">End Date:</label>
+    <input type="text" name="date_end" id="date_end" value="<%= params[:date_end] %>">
+    <br>
+    <input type="submit" value="Submit">
+  </form>
+  
+<% 'THESE PARAMS ARE EMPTY STRINGS MINIMUM WILL ALWAYS RETURN TRUE' %>
+<% 'THESE PARAMS ARE EMPTY STRINGS MINIMUM WILL ALWAYS RETURN TRUE' %>
+<% 'THESE PARAMS ARE EMPTY STRINGS MINIMUM WILL ALWAYS RETURN TRUE' %>
+  <% if params[:task] || params[:date_start] || params[:date_end] %>
+    <% if @results.empty? %>
+      <p>Sorry, no matches were found.</p>
+    <% else %>
+      <div class='content'>
+        <% unless params[:task].empty? %>
+          <h2>Task: <%= @results.first[:task_name] %></h2>
+          <ul class='task_list'>
+            <% @results.each do |task| %>
+              <li>
+                <span class='task_details'>Date: <%= task[:task_date] %></span>
+                <span class='task_details'>Start: <%= task[:start_at] %></span>
+                <span class='task_details'>End: <%= task[:end_at] %></span>
+                <span class='task_details'>Total: <%= task[:total_time] %></span>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <% 'THESE PARAMS ARE EMPTY STRINGS MINIMUM WILL ALWAYS RETURN TRUE' %>
+          <% 'THESE PARAMS ARE EMPTY STRINGS MINIMUM WILL ALWAYS RETURN TRUE' %> 
+          <% if params[:date_start] && params[:date_end] %>
+            <p>This is a range!</p>
+          <% else %>
+            <p>This is not a range!</p>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+  <% end %>
+<% else %>
+  <p>There are no tasks in the database to search through. Please complete a task to search the database.</p>
+<% end %>
+
+<div class='links'>
+  <p><a href='/timer'>Home</a></p>
+  <p><a href='/timer/history'>History</a></p>
+</div>
+
