@@ -1,5 +1,6 @@
 require 'sinatra'
 require 'tilt/erubis'
+require 'date'
 require 'pry'
 
 require_relative 'database_persistence'
@@ -20,6 +21,38 @@ def error_for_task_name(task_name)
   elsif @storage.all_tasks.any? { |task| task[:name] == task_name }
     'Task name must be unique.'
   end
+end
+
+def error_for_dates(date_start, date_end)
+  return nil if date_start.empty? && date_end.empty?
+
+  if date_start.empty? && date_end.size > 0
+    'Use Start Date to search for a single date.'
+  elsif invalid_date?(date_start)
+    'Dates must be written in YYYY-MM-DD format.'
+  elsif invalid_date?(date_end) && date_end.size > 0
+    'Dates must be written in YYYY-MM-DD format.'
+  elsif nonsequential_dates?(date_start, date_end)
+    'End date must follow start date.'
+  end
+end
+
+def nonsequential_dates?(date_start, date_end)
+  return false if date_end.empty?
+  
+  y1, m1, d1 = date_start.split('-')
+  y2, m2, d2 = date_end.split('-')
+  
+  first = Date.new(y1.to_i, m1.to_i, d1.to_i)
+  second = Date.new(y2.to_i, m2.to_i, d2.to_i)
+  
+  first - second > 0
+end
+
+def invalid_date?(date_string)
+  return true unless date_string.match?(/\d\d\d\d-\d\d-\d\d/)
+  y, m, d = date_string.split('-')
+  !Date.valid_date?(y.to_i, m.to_i, d.to_i)
 end
 
 before do
@@ -94,18 +127,22 @@ get '/timer/history' do
 end
 
 get '/timer/search' do
-  @tasks = @storage.all_tasks
+  @results = nil
   if !params.empty?
     task = params[:task]
     date_start = params[:date_start]
     date_end = params[:date_end]
-    
-    ### Don't forget to validate inputs here
-    ### Validate dates mostly
-    
-    @results = @storage.search_tasks(date_start, date_end, task)
+  
+    error = error_for_dates(date_start, date_end)
+
+    if error
+      session[:error] = error
+    else
+      @results = @storage.search_tasks(date_start, date_end, task)
+    end
   end
   
+  @tasks = @storage.all_tasks
   erb :search, layout: :layout
 end
 

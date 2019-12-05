@@ -19,18 +19,16 @@
     <br>
     <input type="submit" value="Submit">
   </form>
+
   
-<% 'THESE PARAMS ARE EMPTY STRINGS MINIMUM WILL ALWAYS RETURN TRUE' %>
-<% 'THESE PARAMS ARE EMPTY STRINGS MINIMUM WILL ALWAYS RETURN TRUE' %>
-<% 'THESE PARAMS ARE EMPTY STRINGS MINIMUM WILL ALWAYS RETURN TRUE' %>
-  <% if params[:task] || params[:date_start] || params[:date_end] %>
-    <% if @results.empty? %>
-      <p>Sorry, no matches were found.</p>
-    <% else %>
-      <div class='content'>
-        <% unless params[:task].empty? %>
-          <h2>Task: <%= @results.first[:task_name] %></h2>
-          <ul class='task_list'>
+  <% if params[:task] || params[:date_start] %>
+    <div class='content'>
+      <% if !@results.nil? && @results.empty? %>
+        <p>Sorry, no matches were found.</p>
+      <% elsif !@results.nil? %>
+        <ul class='task_list'>
+          <% if params[:task].size > 0 %>
+            <h3>Task: <%= @results.first[:task_name] %></h3>
             <% @results.each do |task| %>
               <li>
                 <span class='task_details'>Date: <%= task[:task_date] %></span>
@@ -39,25 +37,50 @@
                 <span class='task_details'>Total: <%= task[:total_time] %></span>
               </li>
             <% end %>
-          </ul>
-        <% else %>
-          <% 'THESE PARAMS ARE EMPTY STRINGS MINIMUM WILL ALWAYS RETURN TRUE' %>
-          <% 'THESE PARAMS ARE EMPTY STRINGS MINIMUM WILL ALWAYS RETURN TRUE' %> 
-          <% if params[:date_start] && params[:date_end] %>
-            <p>This is a range!</p>
+          <% elsif params[:date_start].size > 0 && params[:date_end].size > 0 %>
+            <h3>Date Range: <%= params[:date_start] %> to <%= params[:date_end] %></h3>
+            <% @results.uniq { |t| t[:task_date] }.each do |task_d| %>
+              <h4><%= task_d[:task_date] %></h4>
+              <% @results.uniq { |t| t[:task_name] }.each do |task_n| %>
+                <% @results.each do |task| %>
+                  <% if task[:task_date] == task_d[:task_date] && task[:task_name] == task_n[:task_name] %>
+                    <h4><%= task_n[:task_name] %></h4>
+                    <li>
+                      <span class='task_details'>Start: <%= task[:start_at] %></span>
+                      <span class='task_details'>End: <%= task[:end_at] %></span>
+                      <span class='task_details'>Total: <%= task[:total_time] %></span>
+                    </li>
+                  <% end %>
+                <% end %>
+              <% end %>
+            <% end %>
           <% else %>
-            <p>This is not a range!</p>
+            <h3>Date: <%= params[:date_start] %></h3>
+            <% @results.uniq { |t| t[:task_name] }.each do |task| %>
+              <ul>
+                <h4><%= task[:task_name] %></h4>
+                <% @results.each do |task_details| %>
+                  <% if task[:task_name] == task_details[:task_name] %>
+                    <li>
+                      <span class='task_details'>Start: <%= task_details[:start_at] %></span>
+                      <span class='task_details'>End: <%= task_details[:end_at] %></span>
+                      <span class='task_details'>Total: <%= task_details[:total_time] %></span>
+                    </li>
+                  <% end %>
+                <% end %>
+              </ul>
+            <% end %>
           <% end %>
-        <% end %>
-      </div>
-    <% end %>
+        </ul>
+      <% end %>
+    </div>
   <% end %>
 <% else %>
-  <p>There are no tasks in the database to search through. Please complete a task to search the database.</p>
+    <p>There are no tasks in the database to search through. Please complete a task to search the database.</p>
 <% end %>
-
 <div class='links'>
   <p><a href='/timer'>Home</a></p>
   <p><a href='/timer/history'>History</a></p>
 </div>
+
 

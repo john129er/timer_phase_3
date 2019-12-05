@@ -6,6 +6,7 @@ gem 'sinatra', '~> 2.0', '>= 2.0.7'
 gem 'sinatra-contrib'
 gem 'erubis'
 gem 'pg'
+gem 'date'
 gem 'pry'
 
 group :production do

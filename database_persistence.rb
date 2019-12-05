@@ -210,7 +210,7 @@ class DatabasePersistence
   def query_end
     sql = <<~SQL
       AND timetable.duration IS NOT NULL
-      ORDER BY tasks.name ASC;
+      ORDER BY timetable.start_at::date ASC;
     SQL
   end
   

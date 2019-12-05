@@ -1,7 +1,7 @@
 <div>
   <h2>Tasks Completed For Today: <%= @current_date %></h2>
   <div class='content'>
-    <ul>
+    <ul class='task_list'>
       <% if @tasks_today.empty? %>
         <li>
           <h3 class='task_header'>There are no tasks completed today.</h3>
