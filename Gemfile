@@ -10,5 +10,5 @@ gem 'date'
 gem 'pry'
 
 group :production do
-  gem 'puma'
+  gem 'puma', '>= 4.3.1'  
 end
